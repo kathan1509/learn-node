@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <h1>Todo list</h1>
+    <div id="todos"></div>
+    <div>
+      <input id="inp" type="text" />
+      <button onclick="addTodo()">Add Todo</button>
+    </div>
+
+    <script>
+      let currentIndex = 1;
+
+      function addTodo() {
+        const inputEl = document.getElementById("inp");
+        const todotext = inputEl.value.trim();
+
+        if (todotext === "") {
+          alert("Please enter a todo item.");
+          return;
+        }
+
+        const parentEl = document.getElementById("todos");
+        const newTodo = document.createElement("div");
+        newTodo.setAttribute("id", "todo-" + currentIndex);
+
+        const newHeading = document.createElement("h4");
+        newHeading.textContent = currentIndex + ". " + todotext;
+
+        const newbtn = document.createElement("button");
+        newbtn.textContent = "Delete";
+
+        newbtn.setAttribute("onclick", "deleteTodo(" + currentIndex + ")");
+
+        newTodo.appendChild(newHeading);
+        newTodo.appendChild(newbtn);
+        parentEl.appendChild(newTodo);
+
+        inputEl.value = "";
+        currentIndex++;
+      }
+      function deleteTodo(index) {
+        const element = document.getElementById("todo-" + index);
+        if (element) {
+          element.parentNode.removeChild(element);
+        }
+      }
+    </script>
+  </body>
+</html>
