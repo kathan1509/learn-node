@@ -124,14 +124,18 @@ adminRouter.post("/course", adminMiddleware, async (req, res) => {
 });
 
 adminRouter.put("/course/:id", adminMiddleware, async (req, res) => {
-  const { id } = req.params;
-  const { title, description, price, imageUrl } = req.body;
+  const adminId = req.userId;
+  const { title, description, price, imageUrl, courseId } = req.body;
 
   try {
-    const course = await courseModel.findByIdAndUpdate(
-      id,
-      { title, description, price, imageUrl },
-      { new: true } // Return the updated document
+    const course = await courseModel.updateOne(
+      { _id: courseId, creatorId: adminId },
+      {
+        title,
+        description,
+        price,
+        imageUrl,
+      }
     );
 
     if (!course) {
@@ -153,8 +157,11 @@ adminRouter.put("/course/:id", adminMiddleware, async (req, res) => {
 });
 
 adminRouter.get("/courses/bulk", adminMiddleware, async (req, res) => {
+  const adminId = req.userId;
   try {
-    const courses = await courseModel.find({});
+    const courses = await courseModel.find({
+      creatorId: adminId,
+    });
     res.json({
       message: "Courses are loaded",
       courses,
