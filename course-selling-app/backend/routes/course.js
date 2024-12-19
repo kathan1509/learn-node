@@ -6,9 +6,17 @@ const courseRouter = Router();
 
 courseRouter.post("/purchase", async (req, res) => {
   try {
-    const { courseId } = req.body;
+    const { courseId } = req.body.courseId;
+    const userId = req.userId;
     const course = await courseModel.findById(courseId);
-    const purchase = await purchaseModel.create({
+
+    if (!course) {
+      return res.status(404).json({
+        message: "Course not found",
+      });
+    }
+
+    await purchaseModel.create({
       userId: req.userId,
       courseId: course._id,
     });
@@ -23,9 +31,9 @@ courseRouter.post("/purchase", async (req, res) => {
   }
 });
 
-courseRouter.get("/preview", (req, res) => {
+courseRouter.get("/preview", async (req, res) => {
   try {
-    const courses = courseModel.find({});
+    const courses = await courseModel.find({});
     res.json({
       message: "Courses are loaded",
     });
