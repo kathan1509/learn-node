@@ -4,7 +4,7 @@ const { purchaseModel, courseModel } = require("../db");
 
 const courseRouter = Router();
 
-courseRouter.post("/purchase", async (req, res) => {
+courseRouter.post("/purchase", userMiddleware, async (req, res) => {
   try {
     const { courseId } = req.body.courseId;
     const userId = req.userId;
@@ -17,8 +17,8 @@ courseRouter.post("/purchase", async (req, res) => {
     }
 
     await purchaseModel.create({
-      userId: req.userId,
-      courseId: course._id,
+      userId,
+      courseId,
     });
     res.json({
       message: "Course Purhcased",
@@ -35,6 +35,7 @@ courseRouter.get("/preview", async (req, res) => {
   try {
     const courses = await courseModel.find({});
     res.json({
+      courses,
       message: "Courses are loaded",
     });
   } catch (error) {

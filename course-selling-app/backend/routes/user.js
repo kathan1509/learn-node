@@ -1,5 +1,5 @@
 const { Router } = require("express");
-const { userModel, purchaseModel } = require("../db");
+const { userModel, purchaseModel, courseModel } = require("../db");
 const jwt = require("jsonwebtoken");
 const { JWT_USER_PASSWORD } = require("../config");
 const { userMiddleware } = require("../middleware/user");
@@ -119,8 +119,18 @@ userRouter.get("/purchases", userMiddleware, async (req, res) => {
   const userId = req.userId;
   const courses = courseModel.find({ creatorId: userId });
 
+  if (!courses) {
+    return res.status(404).json({
+      message: "Courses not found",
+    });
+  }
+
   const purchases = await purchaseModel.find({ userId: userId });
+
+  const courseData = await courseModel.find({ _id: { $in: purchases } });
   res.json({
+    purchases,
+    courseData,
     message: "Courses are loaded",
   });
 });
